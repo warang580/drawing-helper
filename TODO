@@ -1,4 +1,5 @@
 Improvements
+-- Display grid On/Off don't work after opening new files
 -- Add thread security & spin
 -- Generalize filters parameters
 -- Display grid with ctrl+d + other filter
