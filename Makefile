@@ -14,7 +14,7 @@ CFLAGS ?= -W -Wall -Wextra -Wmissing-declarations -Wmissing-prototypes \
 # Debug mode
 CFLAGS += -D DEBUG
 
-# Linker options
+# Linker options (none)
 LDFLAGS ?=
 
 # GTK+
