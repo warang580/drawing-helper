@@ -20,7 +20,7 @@ clamp_focus_point(GtkDHCanvas* canvas G_GNUC_UNUSED)
 	// Using diagonal to get maximal offset (+ margin)
 	gdouble diag = sqrt((iw * iw) + (ih * ih));
 	gdouble xoff = (diag - iw) / 2.0 * DH_MARGIN;
-	gdouble yoff = (diag - ih) / 2.0 * DH_MARGIN; 
+	gdouble yoff = (diag - ih) / 2.0 * DH_MARGIN;
 
 	// Computing offset for each direction
 	gdouble xmin = zoom * -xoff;
@@ -53,7 +53,7 @@ gtk_dhcanvas_expose_event(GtkWidget* self, GdkEventExpose* event)
 	cairo_rectangle(context, event->area.x,     event->area.y,
 		                     event->area.width, event->area.height);
 	cairo_clip(context);
-	
+
 	// Background
 	cairo_set_source_rgb(context, DH_WH/255., DH_WH/255., DH_WH/255.);
 	cairo_paint(context);
@@ -85,7 +85,7 @@ gtk_dhcanvas_expose_event(GtkWidget* self, GdkEventExpose* event)
 
 		if (pixbuf)
 		{
-			v->surface = cairo_surface_create_similar(cairo_get_target(context), 
+			v->surface = cairo_surface_create_similar(cairo_get_target(context),
 			                                          CAIRO_CONTENT_COLOR,
 			                                          v->width,
 			                                          v->height);
@@ -98,7 +98,7 @@ gtk_dhcanvas_expose_event(GtkWidget* self, GdkEventExpose* event)
 		// Update done !
 		v->update = FALSE;
 	}
-	
+
 	// Display image
 	if (v->surface)
 	{
@@ -113,7 +113,7 @@ gtk_dhcanvas_expose_event(GtkWidget* self, GdkEventExpose* event)
 		// Relation : img(x,y) + focus(fx, fy) * zoom
 		//          = canvas_center(cw/2, ch/2)
 		gdouble x = (cw / 2) - (canvas->focus_point_x * zoom);
-		gdouble y = (ch / 2) - (canvas->focus_point_y * zoom);		
+		gdouble y = (ch / 2) - (canvas->focus_point_y * zoom);
 
 		// Rotation
 		cairo_translate(context, cw / 2 / zoom, ch / 2 / zoom);
@@ -150,7 +150,7 @@ gtk_dhcanvas_expose_event(GtkWidget* self, GdkEventExpose* event)
 		cairo_clip(context);
 		cairo_paint(context);
 		cairo_restore(context);
-		
+
 		#ifdef DEBUG
 			// Draw focus point position (blue)
 			cairo_set_source_rgb(context, 52/255., 35/255., 190/255.);
@@ -175,7 +175,7 @@ gtk_dhcanvas_expose_event(GtkWidget* self, GdkEventExpose* event)
 			cairo_stroke(context);
 
 		#endif
-		
+
 		// Grid
 		if (canvas->grid)
 		{
@@ -307,16 +307,8 @@ gtk_dhcanvas_button_press_event(GtkWidget* self, GdkEventButton* event)
 	{
 		GdkCursor* cursor = NULL;
 
-		// Right-click = drag
-		if (event->button == 1)
-		{
-			canvas->drag = TRUE;
-			cursor = gdk_cursor_new_for_display(
-				gtk_widget_get_display(self),
-				GDK_FLEUR
-			);
-		}
-		else
+		// event->button : 1=left, 2=middle, 3=right (mouse click)
+		if (event->button == 3)
 		{
 			canvas->rotate = TRUE;
 			cursor = gdk_cursor_new_for_display(
@@ -324,9 +316,17 @@ gtk_dhcanvas_button_press_event(GtkWidget* self, GdkEventButton* event)
 				GDK_EXCHANGE
 			);
 		}
-	
+		else
+		{
+			canvas->drag = TRUE;
+			cursor = gdk_cursor_new_for_display(
+				gtk_widget_get_display(self),
+				GDK_FLEUR
+			);
+		}
+
 		// Updating mouse position
-		canvas->drag_x  = event->x; 
+		canvas->drag_x  = event->x;
 		canvas->drag_y  = event->y;
 
 		// Setting cursor
@@ -449,7 +449,7 @@ on_grid_color_set(GtkColorButton* button,
 	canvas->grid_color.g = color.green / DH_COLORS;
 	canvas->grid_color.b = color.blue  / DH_COLORS;
 	canvas->grid_color.a = gtk_color_button_get_alpha(button) / DH_COLORS;
-	
+
 	gtk_widget_queue_draw(GTK_WIDGET(canvas));
 }
 
@@ -483,13 +483,13 @@ GtkWidget*
 gtk_dhcanvas_new(viewer* v)
 {
 	GtkDHCanvas* self = g_object_new(GTK_DHCANVAS_TYPE, NULL);
-	
+
 	self->image_viewer  = v;
-	
+
 	self->zoom_level    = 1.0;
 	self->focus_point_x = 0.0;
 	self->focus_point_y = 0.0;
-	
+
 	self->drag    = FALSE;
 	self->drag_x  = 0.0;
 	self->drag_y  = 0.0;
@@ -506,4 +506,3 @@ gtk_dhcanvas_new(viewer* v)
 
 	return GTK_WIDGET(self);
 }
-
